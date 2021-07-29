@@ -10,57 +10,62 @@ import { MarkerClusterGroup } from "leaflet.markercluster/src";
 import MyNewPopup from "./MyPopup.vue";
 
 import { createApp, defineComponent, ref, nextTick } from "vue";
+import axios from "axios";
+import { ElMessage } from "element-plus";
 
 export default {
   data() {
     return {
-      geojson: [
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [105.6, 25.1],
-          },
-          properties: {
-            name: "Dinagat Islands",
-            popupContent: "zxc",
-          },
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [105.6, 25.2],
-          },
-          properties: {
-            name: "Dinagat Islands2",
-            popupContent: "asd",
-          },
-        },
-      ],
+      fullscreenLoading: false,
     };
   },
   mounted() {
     this.map = L.map("map").setView([30, 110], 6);
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
-    markers.addLayer(
-      L.geoJSON(this.geojson, {
-        style: (feature) => {
-          return { color: feature.properties.color };
-        },
-        onEachFeature: (feature, layer) => {
-          // does this feature have a property named popupContent?
-          if (feature.properties && feature.properties.popupContent) {
-            // layer.bindPopup(feature.properties.popupContent);
-            layer.bindPopup(`<div id="popup-content">Now Loading...</div>`);
-          }
-        },
-        // pointToLayer: (feature, latlng) => {
-        //   return L.circleMarker(latlng, geojsonMarkerOptions);
-        // },
+    const loading = this.$loading({
+      lock: true,
+      text: "Loading",
+      spinner: "el-icon-loading",
+      background: "rgba(0, 0, 0, 0.7)",
+    });
+    axios
+      .get("/api/cars")
+      .then((response) => {
+        // handle success
+        console.log(response);
+        ElMessage.success("地图载入成功！");
+
+        markers.addLayer(
+          L.geoJSON(response.data, {
+            style: (feature) => {
+              return { color: feature.properties.color };
+            },
+            onEachFeature: (feature, layer) => {
+              // does this feature have a property named popupContent?
+              if (feature.properties && feature.properties.name) {
+                // layer.bindPopup(feature.properties.name);
+                layer.bindPopup(`<div id="popup-content">Now Loading...</div>`);
+              }
+            },
+            // pointToLayer: (feature, latlng) => {
+            //   return L.circleMarker(latlng, geojsonMarkerOptions);
+            // },
+          })
+        );
+
+        this.map.addLayer(markers);
       })
-    );
+      .catch((err) => {
+        // handle error
+        console.log(err.response);
+        ElMessage.error(err.response.data.error);
+      })
+      .then(() => {
+        // always executed
+        loading.close();
+      });
+
     markers.on("popupopen", (e) => {
       // All members of FeatureGroup share single popup instance
       // the popup close and recreated itself when direct click on another marker
@@ -71,7 +76,6 @@ export default {
         );
       }, 250);
     });
-    this.map.addLayer(markers);
   },
 };
 </script>
