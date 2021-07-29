@@ -11,7 +11,8 @@ export default defineComponent({
       onClose: () => {
         router.push("/");
       },
-      message: "只是一条消息提示",
+      message: "找不到页面 ",
+      type: "error",
     });
   },
 });

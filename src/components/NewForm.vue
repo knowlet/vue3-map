@@ -10,15 +10,20 @@
       <el-input v-model="form.pass"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="success"
-        ><i class="el-icon-connection"></i> 连接测试
-      </el-button>
-      <el-button type="primary" @click="onSubmit">立即创建</el-button>
+      <el-button type="success" v-loading="loading" @click="onCheck"
+        >连接测试</el-button
+      >
+      <el-button type="primary" v-loading="loading2" @click="onSubmit"
+        >立即创建</el-button
+      >
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import axios from "axios";
+import { defineComponent } from "vue";
+import { ElMessage } from "element-plus";
 export default {
   data() {
     return {
@@ -27,11 +32,48 @@ export default {
         user: "",
         pass: "",
       },
+      loading: false,
+      loading2: false,
     };
   },
   methods: {
     onSubmit() {
-      console.log("submit!");
+      this.loading2 = true;
+      axios
+        .post("/api/new", this.form)
+        .then((response) => {
+          // handle success
+          console.log(response);
+          ElMessage.success("创建成功！");
+        })
+        .catch((err) => {
+          // handle error
+          console.log(err.response);
+          ElMessage.error(err.response.data.error);
+        })
+        .then(() => {
+          // always executed
+          this.loading2 = false;
+        });
+    },
+    onCheck() {
+      this.loading = true;
+      axios
+        .post("/api/check", { url: this.form.url })
+        .then((response) => {
+          // handle success
+          console.log(response);
+          ElMessage.success(response.data.status);
+        })
+        .catch((err) => {
+          // handle error
+          console.log(err.response);
+          ElMessage.error(err.response.data.error);
+        })
+        .then(() => {
+          // always executed
+          this.loading = false;
+        });
     },
   },
 };
