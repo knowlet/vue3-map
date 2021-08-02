@@ -1,7 +1,11 @@
 <template>
   <el-form ref="form" :model="form" label-width="80px">
     <el-form-item label="车辆订单">
-      <el-input type="textarea" v-model="form.cars"></el-input>
+      <el-input
+        type="textarea"
+        :autosize="{ minRows: 4, maxRows: 24 }"
+        v-model="form.cars"
+      ></el-input>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" v-loading="loading" @click="onSubmit"
@@ -14,6 +18,7 @@
 
 <script>
 import axios from "axios";
+import { encode } from "@msgpack/msgpack";
 import { ElMessage } from "element-plus";
 export default {
   data() {
@@ -40,9 +45,11 @@ export default {
         .filter((car) => !!car.url);
       if (cars.length <= 0) {
         ElMessage.error("未输入车辆信息");
+        this.loading = false;
+        return;
       }
       axios
-        .post("/api/batch", cars)
+        .post("/api/batch", encode(cars))
         .then((response) => {
           // handle success
           console.log(response);
@@ -52,15 +59,13 @@ export default {
         })
         .catch((err) => {
           // handle error
-          console.log(err.response);
-          ElMessage.error(err.response.data.error);
+          console.log(err);
+          ElMessage.error(err?.response?.data?.error);
         })
         .then(() => {
           // always executed
           this.loading = false;
         });
-      console.log(cars);
-      this.loading = false;
     },
     onClear() {
       this.form.cars = "";

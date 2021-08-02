@@ -22,7 +22,7 @@
 
 <script>
 import axios from "axios";
-import { defineComponent } from "vue";
+import { encode } from "@msgpack/msgpack";
 import { ElMessage } from "element-plus";
 export default {
   data() {
@@ -40,7 +40,7 @@ export default {
     onSubmit() {
       this.loading2 = true;
       axios
-        .post("/api/new", this.form)
+        .post("/api/new", encode(this.form))
         .then((response) => {
           // handle success
           console.log(response);
@@ -48,7 +48,7 @@ export default {
         })
         .catch((err) => {
           // handle error
-          console.log(err.response);
+          console.log(err);
           ElMessage.error(err.response.data.error);
         })
         .then(() => {
