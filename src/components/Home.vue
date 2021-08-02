@@ -1,5 +1,5 @@
 <template>
-  <div id="map" />
+  <div id="map" v-loading="fullscreenLoading"></div>
 </template>
 
 <script>
@@ -11,7 +11,7 @@ import MyNewPopup from "./MyPopup.vue";
 
 import { createApp, defineComponent, ref, nextTick } from "vue";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { ElCard, ElMessage } from "element-plus";
 
 export default {
   data() {
@@ -23,12 +23,13 @@ export default {
     this.map = L.map("map").setView([30, 110], 6);
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
-    const loading = this.$loading({
-      lock: true,
-      text: "Loading",
-      spinner: "el-icon-loading",
-      background: "rgba(0, 0, 0, 0.7)",
-    });
+    // const loading = this.$loading({
+    //   lock: true,
+    //   text: "Loading",
+    //   spinner: "el-icon-loading",
+    //   background: "rgba(0, 0, 0, 0.7)",
+    // });
+    this.fullscreenLoading = true;
     axios
       .get("/api/cars")
       .then((response) => {
@@ -58,12 +59,13 @@ export default {
       })
       .catch((err) => {
         // handle error
-        console.log(err.response);
-        ElMessage.error(err.response.data.error);
+        console.log(err);
+        ElMessage.error(err?.response?.data?.error);
       })
       .then(() => {
         // always executed
-        loading.close();
+        // loading.close();
+        this.fullscreenLoading = false;
       });
 
     markers.on("popupopen", (e) => {
