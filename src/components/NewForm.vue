@@ -49,7 +49,7 @@ export default {
         .catch((err) => {
           // handle error
           console.log(err);
-          ElMessage.error(err.response.data.error);
+          ElMessage.error(err?.response?.data.error ?? err.message);
         })
         .then(() => {
           // always executed
@@ -68,7 +68,7 @@ export default {
         .catch((err) => {
           // handle error
           console.log(err.response);
-          ElMessage.error(err.response.data.error);
+          ElMessage.error(err?.response?.data.error ?? err.message);
         })
         .then(() => {
           // always executed
