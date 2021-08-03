@@ -1,4 +1,5 @@
 <template>
+  {{ name }}
   {{ car }}
 </template>
 
@@ -6,6 +7,10 @@
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
+    color: {
+      type: String,
+      required: false,
+    },
     name: {
       type: String,
       required: true,
