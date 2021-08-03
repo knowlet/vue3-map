@@ -1,5 +1,5 @@
 <template>
-  {{ name }}
+  {{ car }}
 </template>
 
 <script>
@@ -10,9 +10,9 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    popupContent: {
-      type: String,
-      required: false,
+    car: {
+      type: Object,
+      required: true,
     },
   },
 });
