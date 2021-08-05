@@ -11,6 +11,7 @@ import MyNewPopup from "./MyPopup.vue";
 
 import { createApp, defineComponent, ref, nextTick } from "vue";
 import axios from "axios";
+import ElementPlus from "element-plus";
 import { ElCard, ElMessage } from "element-plus";
 
 export default {
@@ -20,7 +21,7 @@ export default {
     };
   },
   mounted() {
-    this.map = L.map("map").setView([30, 110], 6);
+    this.map = L.map("map").setView([35, 110], 6);
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
     // const loading = this.$loading({
@@ -46,7 +47,10 @@ export default {
               // does this feature have a property named popupContent?
               if (feature.properties && feature.properties.name) {
                 // layer.bindPopup(feature.properties.name);
-                layer.bindPopup(`<div id="popup-content">Now Loading...</div>`);
+                layer.bindPopup(`
+                <div id="popup-content">
+                  <div class="wrapper">Now Loading...</div>
+                </div>`);
               }
             },
             // pointToLayer: (feature, latlng) => {
@@ -73,9 +77,9 @@ export default {
       // the popup close and recreated itself when direct click on another marker
       // magic timeout to prevent mount before recreated
       setTimeout(() => {
-        createApp(MyNewPopup, e.layer.feature.properties).mount(
-          "#popup-content"
-        );
+        createApp(MyNewPopup, e.layer.feature.properties)
+          .use(ElementPlus)
+          .mount("#popup-content");
       }, 250);
     });
   },
@@ -85,5 +89,9 @@ export default {
 <style>
 #map {
   height: 90vh;
+}
+
+.wrapper {
+  min-width: 240px;
 }
 </style>
