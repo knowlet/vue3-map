@@ -21,6 +21,11 @@
         用户
       </template>
       {{ car.user }}
+      <i
+        class="el-icon-document-copy copyBtn"
+        data-clipboard-action="copy"
+        :data-clipboard-text="car.user"
+      ></i>
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -28,6 +33,11 @@
         密码
       </template>
       {{ car.pass }}
+      <i
+        class="el-icon-document-copy copyBtn"
+        data-clipboard-action="copy"
+        :data-clipboard-text="car.pass"
+      ></i>
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -68,6 +78,7 @@
 import { defineComponent } from "vue";
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import Clipboard from "clipboard";
 export default defineComponent({
   props: {
     color: {
@@ -108,6 +119,21 @@ export default defineComponent({
           this.loading = false;
         });
     },
+  },
+  mounted() {
+    const clipboard = new Clipboard(".copyBtn");
+    clipboard.on("success", function (e) {
+      console.info("Action:", e.action);
+      console.info("Text:", e.text);
+      console.info("Trigger:", e.trigger);
+      ElMessage.success("已复制！");
+      e.clearSelection();
+    });
+
+    clipboard.on("error", function (e) {
+      console.error("Action:", e.action);
+      console.error("Trigger:", e.trigger);
+    });
   },
 });
 </script>
