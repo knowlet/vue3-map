@@ -6,6 +6,8 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import L from "leaflet";
 
 import { MarkerClusterGroup } from "leaflet.markercluster/src";
@@ -23,6 +25,10 @@ export default {
     };
   },
   mounted() {
+    L.Marker.prototype.options.icon = L.icon({
+      iconUrl: icon,
+      shadowUrl: iconShadow,
+    });
     this.map = L.map("map").setView([35, 110], 6);
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
