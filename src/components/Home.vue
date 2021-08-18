@@ -41,26 +41,76 @@ export default {
         console.log(response);
         ElMessage.success("地图载入成功！");
 
-        markers.addLayer(
-          L.canvasFlowmapLayer(response.data, {
+        var geoJsonFeatureCollection = {
+          // collection of GeoJSON point features
+          // with origin and destination attribute properties
+          type: "FeatureCollection",
+          features: response.data,
+
+          // see discussion above, demos, and CSV example data sources
+        };
+
+        var oneToManyFlowmapLayer = L.canvasFlowmapLayer(
+          geoJsonFeatureCollection,
+          {
             // required property for this custom layer,
             // which relies on the property names of your own data
             originAndDestinationFieldIds: {
               // all kinds of important stuff here...see docs below
               // however, this isn't required if your own data
               // is in the same format as the layer source code
+              originUniqueIdField: "origin_id",
+              originGeometry: {
+                x: "origin_lon",
+                y: "origin_lat",
+              },
+              destinationUniqueIdField: "destination_id",
+              destinationGeometry: {
+                x: "destination_lon",
+                y: "destination_lat",
+              },
             },
-
-            // some custom options
             pathDisplayMode: "selection",
             animationStarted: true,
             animationEasingFamily: "Cubic",
             animationEasingType: "In",
             animationDuration: 2000,
-          })
-        );
+          }
+        ).addTo(this.map);
 
-        this.map.addLayer(markers);
+        // since this demo is using the optional "pathDisplayMode" as "selection",
+        // it is up to the developer to wire up a click or mouseover listener
+        // and then call the "selectFeaturesForPathDisplay()" method to inform the layer
+        // which Bezier paths need to be drawn
+        oneToManyFlowmapLayer.on("click", function (e) {
+          if (e.sharedOriginFeatures.length) {
+            oneToManyFlowmapLayer.selectFeaturesForPathDisplay(
+              e.sharedOriginFeatures,
+              "SELECTION_NEW"
+            );
+          }
+          if (e.sharedDestinationFeatures.length) {
+            oneToManyFlowmapLayer.selectFeaturesForPathDisplay(
+              e.sharedDestinationFeatures,
+              "SELECTION_NEW"
+            );
+          }
+        });
+
+        // immediately select an origin point for Bezier path display,
+        // instead of waiting for the first user click event to fire
+        // oneToManyFlowmapLayer.selectFeaturesForPathDisplayById(
+        //   "s_city_id",
+        //   562,
+        //   true,
+        //   "SELECTION_NEW"
+        // );
+
+        // markers.addLayer(
+
+        // );
+
+        // this.map.addLayer(markers);
       })
       .catch((err) => {
         // handle error
