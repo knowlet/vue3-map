@@ -32,13 +32,8 @@ export default {
     this.map = L.map("map").setView([35, 110], 6);
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
-    // const loading = this.$loading({
-    //   lock: true,
-    //   text: "Loading",
-    //   spinner: "el-icon-loading",
-    //   background: "rgba(0, 0, 0, 0.7)",
-    // });
     this.fullscreenLoading = true;
+    this.$loadScript("/js/CanvasFlowmapLayer.js");
     axios
       .get("/api/cars")
       .then((response) => {
@@ -47,23 +42,21 @@ export default {
         ElMessage.success("地图载入成功！");
 
         markers.addLayer(
-          L.geoJSON(response.data, {
-            style: (feature) => {
-              return { color: feature.properties.color };
+          L.canvasFlowmapLayer(response.data, {
+            // required property for this custom layer,
+            // which relies on the property names of your own data
+            originAndDestinationFieldIds: {
+              // all kinds of important stuff here...see docs below
+              // however, this isn't required if your own data
+              // is in the same format as the layer source code
             },
-            onEachFeature: (feature, layer) => {
-              // does this feature have a property named popupContent?
-              if (feature.properties && feature.properties.name) {
-                // layer.bindPopup(feature.properties.name);
-                layer.bindPopup(`
-                <div id="popup-content">
-                  <div class="wrapper">Now Loading...</div>
-                </div>`);
-              }
-            },
-            // pointToLayer: (feature, latlng) => {
-            //   return L.circleMarker(latlng, geojsonMarkerOptions);
-            // },
+
+            // some custom options
+            pathDisplayMode: "selection",
+            animationStarted: true,
+            animationEasingFamily: "Cubic",
+            animationEasingType: "In",
+            animationDuration: 2000,
           })
         );
 
