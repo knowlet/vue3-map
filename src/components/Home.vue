@@ -111,11 +111,6 @@ export default {
             false,
             "SELECTION_ADD"
           );
-          setTimeout(() => {
-            createApp(MyNewPopup, e.layer.feature.properties)
-              .use(ElementPlus)
-              .mount("#popup-content");
-          }, 250);
         });
 
         // immediately select an origin point for Bezier path display,
@@ -126,8 +121,17 @@ export default {
         //   true,
         //   "SELECTION_NEW"
         // );
-
-        // markers.addLayer(oneToManyFlowmapLayer);
+        oneToManyFlowmapLayer.on("popupopen", (e) => {
+          // All members of FeatureGroup share single popup instance
+          // the popup close and recreated itself when direct click on another marker
+          // magic timeout to prevent mount before recreated
+          setTimeout(() => {
+            createApp(MyNewPopup, e.layer.feature.properties)
+              .use(ElementPlus)
+              .mount("#popup-content");
+          }, 250);
+        });
+        markers.addLayer(oneToManyFlowmapLayer);
 
         this.map.addLayer(markers);
       })
@@ -141,17 +145,6 @@ export default {
         // loading.close();
         this.fullscreenLoading = false;
       });
-
-    markers.on("popupopen", (e) => {
-      // All members of FeatureGroup share single popup instance
-      // the popup close and recreated itself when direct click on another marker
-      // magic timeout to prevent mount before recreated
-      setTimeout(() => {
-        createApp(MyNewPopup, e.layer.feature.properties)
-          .use(ElementPlus)
-          .mount("#popup-content");
-      }, 250);
-    });
   },
 };
 </script>
