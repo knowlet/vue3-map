@@ -95,6 +95,17 @@ export default {
               "SELECTION_NEW"
             );
           }
+          oneToManyFlowmapLayer.selectFeaturesForPathDisplayById(
+            "destination_id",
+            0,
+            false,
+            "SELECTION_ADD"
+          );
+          setTimeout(() => {
+            createApp(MyNewPopup, e.layer.feature.properties)
+              .use(ElementPlus)
+              .mount("#popup-content");
+          }, 250);
         });
 
         // immediately select an origin point for Bezier path display,
@@ -106,11 +117,9 @@ export default {
         //   "SELECTION_NEW"
         // );
 
-        // markers.addLayer(
+        // markers.addLayer(oneToManyFlowmapLayer);
 
-        // );
-
-        // this.map.addLayer(markers);
+        this.map.addLayer(markers);
       })
       .catch((err) => {
         // handle error
