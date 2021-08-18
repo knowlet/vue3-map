@@ -53,6 +53,16 @@ export default {
         var oneToManyFlowmapLayer = L.canvasFlowmapLayer(
           geoJsonFeatureCollection,
           {
+            onEachFeature: (feature, layer) => {
+              // does this feature have a property named popupContent?
+              if (feature.properties && feature.properties.name) {
+                // layer.bindPopup(feature.properties.name);
+                layer.bindPopup(`
+                <div id="popup-content">
+                  <div class="wrapper">Now Loading...</div>
+                </div>`);
+              }
+            },
             // required property for this custom layer,
             // which relies on the property names of your own data
             originAndDestinationFieldIds: {
@@ -96,7 +106,7 @@ export default {
             );
           }
           oneToManyFlowmapLayer.selectFeaturesForPathDisplayById(
-            "destination_id",
+            "origin_id",
             0,
             false,
             "SELECTION_ADD"
