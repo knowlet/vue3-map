@@ -29,7 +29,10 @@ export default {
       iconUrl: icon,
       shadowUrl: iconShadow,
     });
-    this.map = L.map("map").setView([35, 110], 6);
+    this.map = L.map("map", {
+      minZoom: 4,
+      maxZoom: 12,
+    }).setView([35, 110], 6);
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
     this.fullscreenLoading = true;
