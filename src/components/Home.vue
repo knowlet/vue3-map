@@ -61,7 +61,7 @@ export default {
                 createApp(MyNewPopup, feature.properties)
                   .use(ElementPlus)
                   .mount(div);
-                layer.bindPopup(div.innerHTML);
+                layer.bindPopup(div);
               }
             },
             // required property for this custom layer,
