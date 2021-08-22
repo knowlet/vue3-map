@@ -57,10 +57,11 @@ export default {
               // does this feature have a property named popupContent?
               if (feature.properties && feature.properties.name) {
                 // layer.bindPopup(feature.properties.name);
-                layer.bindPopup(`
-                <div id="popup-content">
-                  <div class="wrapper">Now Loading...</div>
-                </div>`);
+                const div = document.createElement("div");
+                createApp(MyNewPopup, feature.properties)
+                  .use(ElementPlus)
+                  .mount(div);
+                layer.bindPopup(div.innerHTML);
               }
             },
             // required property for this custom layer,
@@ -113,24 +114,6 @@ export default {
           );
         });
 
-        // immediately select an origin point for Bezier path display,
-        // instead of waiting for the first user click event to fire
-        // oneToManyFlowmapLayer.selectFeaturesForPathDisplayById(
-        //   "s_city_id",
-        //   562,
-        //   true,
-        //   "SELECTION_NEW"
-        // );
-        oneToManyFlowmapLayer.on("popupopen", (e) => {
-          // All members of FeatureGroup share single popup instance
-          // the popup close and recreated itself when direct click on another marker
-          // magic timeout to prevent mount before recreated
-          setTimeout(() => {
-            createApp(MyNewPopup, e.layer.feature.properties)
-              .use(ElementPlus)
-              .mount("#popup-content");
-          }, 250);
-        });
         markers.addLayer(oneToManyFlowmapLayer);
 
         this.map.addLayer(markers);
