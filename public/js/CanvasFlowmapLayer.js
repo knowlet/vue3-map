@@ -571,7 +571,7 @@
       // Leaflet will redraw a CircleMarker when its latLng is changed
       // sometimes they are drawn 2+ times if this occurs during many "move" events
       // so for now, only chang CircleMarker latlng after a single "moveend" event
-      this._wrapGeoJsonCircleMarkers();
+      // this._wrapGeoJsonCircleMarkers();
     },
 
     _redrawCanvas: function() {
