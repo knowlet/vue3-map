@@ -53,17 +53,6 @@ export default {
         var oneToManyFlowmapLayer = L.canvasFlowmapLayer(
           geoJsonFeatureCollection,
           {
-            onEachFeature: (feature, layer) => {
-              // does this feature have a property named popupContent?
-              if (feature.properties && feature.properties.name) {
-                // layer.bindPopup(feature.properties.name);
-                const div = document.createElement("div");
-                createApp(MyNewPopup, feature.properties)
-                  .use(ElementPlus)
-                  .mount(div);
-                layer.bindPopup(div);
-              }
-            },
             // required property for this custom layer,
             // which relies on the property names of your own data
             originAndDestinationFieldIds: {
@@ -93,7 +82,14 @@ export default {
         // it is up to the developer to wire up a click or mouseover listener
         // and then call the "selectFeaturesForPathDisplay()" method to inform the layer
         // which Bezier paths need to be drawn
-        oneToManyFlowmapLayer.on("click", function (e) {
+        oneToManyFlowmapLayer.on("click", (e) => {
+          if (e.layer.feature.properties && e.layer.feature.properties.name) {
+            const div = document.createElement("div");
+            createApp(MyNewPopup, e.layer.feature.properties)
+              .use(ElementPlus)
+              .mount(div);
+            L.popup().setLatLng(e.latlng).setContent(div).openOn(this.map);
+          }
           if (e.sharedOriginFeatures.length) {
             oneToManyFlowmapLayer.selectFeaturesForPathDisplay(
               e.sharedOriginFeatures,
