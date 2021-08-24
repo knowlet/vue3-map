@@ -105,7 +105,7 @@
           return {
             renderer: canvasRenderer,
             radius: 2.5,
-            weight: 0.25,
+            weight: 5,
             color: 'rgb(17, 142, 170)',
             fillColor: 'rgb(17, 142, 170)',
             fillOpacity: 0.7
