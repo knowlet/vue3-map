@@ -53,40 +53,14 @@ export default {
 
           // see discussion above, demos, and CSV example data sources
         };
+        var l = L.geoJSON(geoJsonFeatureCollection, {
+          style: (feature) => {
+            return { color: feature.properties.color };
+          },
+        }).addTo(this.map);
 
-        var oneToManyFlowmapLayer = L.canvasFlowmapLayer(
-          geoJsonFeatureCollection,
-          {
-            // required property for this custom layer,
-            // which relies on the property names of your own data
-            originAndDestinationFieldIds: {
-              // all kinds of important stuff here...see docs below
-              // however, this isn't required if your own data
-              // is in the same format as the layer source code
-              originUniqueIdField: "origin_id",
-              originGeometry: {
-                x: "origin_lon",
-                y: "origin_lat",
-              },
-              destinationUniqueIdField: "destination_id",
-              destinationGeometry: {
-                x: "destination_lon",
-                y: "destination_lat",
-              },
-            },
-            pathDisplayMode: "selection",
-            animationStarted: true,
-            animationEasingFamily: "Cubic",
-            animationEasingType: "In",
-            animationDuration: 2000,
-          }
-        ).addTo(this.map);
-
-        // since this demo is using the optional "pathDisplayMode" as "selection",
-        // it is up to the developer to wire up a click or mouseover listener
-        // and then call the "selectFeaturesForPathDisplay()" method to inform the layer
-        // which Bezier paths need to be drawn
-        oneToManyFlowmapLayer.on("click", (e) => {
+        l.on("click", e => {
+          console.log(e)
           if (e.layer.feature.properties && e.layer.feature.properties.name) {
             const div = document.createElement("div");
             createApp(MyNewPopup, e.layer.feature.properties)
@@ -94,27 +68,9 @@ export default {
               .mount(div);
             L.popup().setLatLng(e.latlng).setContent(div).openOn(this.map);
           }
-          if (e.sharedOriginFeatures.length) {
-            oneToManyFlowmapLayer.selectFeaturesForPathDisplay(
-              e.sharedOriginFeatures,
-              "SELECTION_NEW"
-            );
-          }
-          if (e.sharedDestinationFeatures.length) {
-            oneToManyFlowmapLayer.selectFeaturesForPathDisplay(
-              e.sharedDestinationFeatures,
-              "SELECTION_NEW"
-            );
-          }
-          oneToManyFlowmapLayer.selectFeaturesForPathDisplayById(
-            "origin_id",
-            0,
-            false,
-            "SELECTION_ADD"
-          );
-        });
+        })
 
-        markers.addLayer(oneToManyFlowmapLayer);
+        markers.addLayer(l);
 
         this.map.addLayer(markers);
       })
