@@ -9,6 +9,21 @@
     <el-form-item label="密码">
       <el-input v-model="form.pass" placeholder="password"></el-input>
     </el-form-item>
+    <el-form-item label="地區">
+      <el-input v-model="form.country" placeholder="中国"></el-input>
+    </el-form-item>
+    <el-form-item label="省份">
+      <el-input v-model="form.province" placeholder="上海"></el-input>
+    </el-form-item>
+    <el-form-item label="城市">
+      <el-input v-model="form.city" placeholder="上海市"></el-input>
+    </el-form-item>
+    <el-form-item label="廠牌">
+      <el-input v-model="form.vendor" placeholder="飞鱼星企业级智能上网行为管理系统"></el-input>
+    </el-form-item>
+    <el-form-item label="模式">
+      <el-input v-model="form.protocol" placeholder="PPTP"></el-input>
+    </el-form-item>
     <el-form-item>
       <el-button type="success" v-loading="loading" @click="onCheck"
         >连接测试</el-button
@@ -31,6 +46,13 @@ export default {
         url: "",
         user: "",
         pass: "",
+        country: "",
+        province: "",
+        city: "",
+        vendor: "",
+        protocol: "",
+        lng: 0,
+        lat: 0,
       },
       loading: false,
       loading2: false,
