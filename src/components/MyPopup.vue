@@ -51,16 +51,17 @@
         <i class="el-icon-office-building"></i>
         城市
       </template>
-      {{ car.city }}
+      {{ car.country }} {{ car.province }} {{ car.city }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
         <i class="el-icon-location-information"></i>
         座标
       </template>
-      <el-tag size="small">{{ car.lng }}</el-tag>
-      &nbsp;
-      <el-tag size="small">{{ car.lat }}</el-tag>
+      <a :href="`http://api.map.baidu.com/marker?location=${car.lat},${car.lng}&output=html&title=車車地圖&content=帶你尋找車車`" target="_blank" rel="noopener noreferrer">
+        <el-tag size="small">{{ car.lng }}</el-tag>
+        <el-tag size="small">{{ car.lat }}</el-tag>
+      </a>
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -70,6 +71,20 @@
       <a :href="car.url" target="_blank" rel="noopener noreferrer">{{
         car.url
       }}</a>
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <i class="el-icon-link"></i>
+        廠牌
+      </template>
+      {{ car.vendor }}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <i class="el-icon-link"></i>
+        模式
+      </template>
+      {{ car.protocol }}
     </el-descriptions-item>
   </el-descriptions>
 </template>
