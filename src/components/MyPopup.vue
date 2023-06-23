@@ -7,12 +7,17 @@
     border="true">
     <template #extra>
       <el-button
+        type="danger"
+        size="mini"
+        @click="onDelete(name)"
+        v-loading="loading"
+        >刪除</el-button>
+      <el-button
         type="primary"
         size="mini"
         @click="onCheck(car.url)"
         v-loading="loading"
-        >测试</el-button
-      >
+        >测试</el-button>
     </template>
     <el-descriptions-item min-width="64px">
       <template #label>
@@ -91,7 +96,7 @@
 <script lang="ts">
 import axios from "axios";
 import Clipboard from "clipboard";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
@@ -132,6 +137,42 @@ export default defineComponent({
           // always executed
           this.loading = false;
         });
+    },
+    onDelete(name: string) {
+      const id = Number(name.split("#")[1]);
+      ElMessageBox.confirm(
+        '确认删除？',
+        '警告',
+        {
+          confirmButtonText: '好的',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      )
+        .then(() => {
+          axios
+            .post("/api/delete", { id: id })
+            .then((response) => {
+              // handle success
+              console.log(response);
+              // ElMessage.success(response.data.status);
+              ElMessage({
+                type: 'success',
+                message: 'Delete completed',
+              })
+            })
+            .catch((err) => {
+              // handle error
+              console.log(err.response);
+              ElMessage.error(err?.response?.data.error ?? err.message);
+            })
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Delete canceled',
+          })
+        })
     },
   },
   mounted() {
