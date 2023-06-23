@@ -1,5 +1,5 @@
 import ElementPlus from 'element-plus'
-import 'element-plus/lib/theme-chalk/index.css'
+import 'element-plus/dist/index.css'
 import { createApp } from 'vue'
 import LoadScript from 'vue-plugin-load-script'
 import App from './App.vue'
