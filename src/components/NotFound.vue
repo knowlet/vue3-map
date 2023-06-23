@@ -1,8 +1,8 @@
 <template></template>
 
-<script>
-import { defineComponent } from "vue";
+<script lang="ts">
 import { ElMessage } from "element-plus";
+import { defineComponent } from "vue";
 import router from "../router";
 
 export default defineComponent({

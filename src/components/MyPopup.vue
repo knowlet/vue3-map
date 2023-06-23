@@ -4,8 +4,7 @@
     :title="name"
     :column="1"
     size="mini"
-    border
-  >
+    border="true">
     <template #extra>
       <el-button
         type="primary"
@@ -89,11 +88,11 @@
   </el-descriptions>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script lang="ts">
 import axios from "axios";
-import { ElMessage } from "element-plus";
 import Clipboard from "clipboard";
+import { ElMessage } from "element-plus";
+import { defineComponent } from "vue";
 export default defineComponent({
   props: {
     color: {
@@ -115,7 +114,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onCheck(url) {
+    onCheck(url: string) {
       this.loading = true;
       axios
         .post("/api/check", { url: url })
