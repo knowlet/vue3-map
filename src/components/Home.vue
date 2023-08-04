@@ -10,7 +10,7 @@ import MyProvence from "./MyProvence.vue";
 </script>
 
 <script lang="ts">
-import { geoJSON, latLng, layerGroup, map, popup, tileLayer } from "leaflet";
+import { GeoJSON, geoJSON, latLng, layerGroup, map, popup, tileLayer } from "leaflet";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet/dist/leaflet.css";
@@ -18,7 +18,7 @@ import "leaflet/dist/leaflet.css";
 import { MarkerClusterGroup } from "leaflet.markercluster/src";
 import MyNewPopup from "./MyPopup.vue";
 
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import ElementPlus, { ElMessage } from "element-plus";
 import { createApp } from "vue";
 
@@ -32,13 +32,7 @@ export default {
     };
   },
   mounted() {
-    interface MapOptions {
-      center: [number, number];
-      zoom: number;
-      // other properties
-    }
-
-    const options: MapOptions = {
+    const options = {
       center: latLng(35, 110),
       zoom: 6,
     };
@@ -52,12 +46,12 @@ export default {
     this.fullscreenLoading = true;
     axios
       .get("/api/cars")
-      .then((response) => {
+      .then((response: AxiosResponse<GeoJSON.Feature[]>) => {
         // handle success
         console.log(response);
         ElMessage.success("地图载入成功！");
 
-        var geoJsonFeatureCollection = {
+        var geoJsonFeatureCollection: GeoJSON.FeatureCollection = {
           // collection of GeoJSON point features
           // with origin and destination attribute properties
           type: "FeatureCollection",
@@ -65,11 +59,7 @@ export default {
 
           // see discussion above, demos, and CSV example data sources
         };
-        var l = geoJSON(geoJsonFeatureCollection, {
-          style: (feature) => {
-            return { color: feature.properties.color };
-          },
-        }).addTo(mymap);
+        var l = geoJSON(geoJsonFeatureCollection).addTo(mymap);
 
         l.on("click", e => {
           if (e.layer.feature.properties && e.layer.feature.properties.name) {
