@@ -1,4 +1,12 @@
 <template>
+  <el-select v-model="value" class="m-2" placeholder="Select" size="large" @change="downloadCar" :loading="loading">
+    <el-option
+      v-for="item in provinces"
+      :key="item"
+      :label="item"
+      :value="item"
+    />
+  </el-select>
   <div id="map" v-loading="fullscreenLoading"></div>
 </template>
 
@@ -20,10 +28,20 @@ import { createApp } from "vue";
 export default {
   data() {
     return {
+      value: "",
+      provinces: [],
       fullscreenLoading: false,
+      loading: false,
     };
   },
   mounted() {
+    this.loading = true;
+    fetch("/api/provinces")
+      .then((res) => res.json())
+      .then((data) => {
+        this.provinces = data;
+        this.loading = false;
+      });
     L.Marker.prototype.options.icon = L.icon({
       iconUrl: icon,
       shadowUrl: iconShadow,
@@ -84,6 +102,16 @@ export default {
         this.fullscreenLoading = false;
       });
   },
+  methods: {
+    downloadCar() {
+      this.loading = true;
+      if (this.value) {
+        window.open("/api/cars/" + this.value);
+      }
+      this.value = "";
+      this.loading = false;
+    }
+  }
 };
 </script>
 
