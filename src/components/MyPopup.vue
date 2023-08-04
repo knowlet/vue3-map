@@ -70,6 +70,13 @@
     <el-descriptions-item>
       <template #label>
         <i class="el-icon-link"></i>
+        單位
+      </template>
+      {{ car.unit }}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <i class="el-icon-link"></i>
         地址
       </template>
       <a :href="car.url" target="_blank" rel="noopener noreferrer">{{

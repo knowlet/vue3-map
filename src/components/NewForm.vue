@@ -18,6 +18,9 @@
     <el-form-item label="城市">
       <el-input v-model="form.city" placeholder="上海市"></el-input>
     </el-form-item>
+    <el-form-item label="單位">
+      <el-input v-model="form.unit" placeholder=""></el-input>
+    </el-form-item>
     <el-form-item label="廠牌">
       <el-input v-model="form.vendor" placeholder="飞鱼星企业级智能上网行为管理系统"></el-input>
     </el-form-item>
@@ -49,6 +52,7 @@ export default {
         country: "",
         province: "",
         city: "",
+        unit: "",
         vendor: "",
         protocol: "",
         lng: 0,
