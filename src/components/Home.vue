@@ -10,12 +10,10 @@
   <div id="map" v-loading="fullscreenLoading"></div>
 </template>
 
-<script>
-import L from "leaflet";
+<script lang="ts">
+import { geoJSON, latLng, layerGroup, map, popup, tileLayer } from "leaflet";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 
 import { MarkerClusterGroup } from "leaflet.markercluster/src";
@@ -35,24 +33,22 @@ export default {
     };
   },
   mounted() {
-    this.loading = true;
-    fetch("/api/provinces")
-      .then((res) => res.json())
-      .then((data) => {
-        this.provinces = data;
-        this.loading = false;
-      });
-    L.Marker.prototype.options.icon = L.icon({
-      iconUrl: icon,
-      shadowUrl: iconShadow,
-    });
-    this.map = L.map("map", {
-    }).setView([35, 110], 6);
+    interface MapOptions {
+      center: [number, number];
+      zoom: number;
+      // other properties
+    }
+
+    const options: MapOptions = {
+      center: latLng(35, 110),
+      zoom: 6,
+    };
+    const mymap = map("map", options);
     //控制地图底图
-    L.layerGroup([
-      L.tileLayer('https://t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=56b81006f361f6406d0e940d2f89a39c', { subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'] }),
-      L.tileLayer('https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=56b81006f361f6406d0e940d2f89a39c', { subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'] })
-    ]).addTo(this.map);
+    layerGroup([
+      tileLayer('https://t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=56b81006f361f6406d0e940d2f89a39c', { subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'] }),
+      tileLayer('https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=56b81006f361f6406d0e940d2f89a39c', { subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'] })
+    ]).addTo(mymap);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
     this.fullscreenLoading = true;
     axios
@@ -70,26 +66,24 @@ export default {
 
           // see discussion above, demos, and CSV example data sources
         };
-        var l = L.geoJSON(geoJsonFeatureCollection, {
+        var l = geoJSON(geoJsonFeatureCollection, {
           style: (feature) => {
             return { color: feature.properties.color };
           },
-        }).addTo(this.map);
+        }).addTo(mymap);
 
         l.on("click", e => {
-          console.log(e)
           if (e.layer.feature.properties && e.layer.feature.properties.name) {
             const div = document.createElement("div");
             createApp(MyNewPopup, e.layer.feature.properties)
               .use(ElementPlus)
               .mount(div);
-            L.popup().setLatLng(e.latlng).setContent(div).openOn(this.map);
+            popup().setLatLng(e.latlng).setContent(div).openOn(mymap);
           }
         })
 
         markers.addLayer(l);
-
-        this.map.addLayer(markers);
+        mymap.addLayer(markers);
       })
       .catch((err) => {
         // handle error
