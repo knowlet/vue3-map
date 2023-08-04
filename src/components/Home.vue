@@ -10,9 +10,11 @@ import MyProvence from "./MyProvence.vue";
 </script>
 
 <script lang="ts">
-import { GeoJSON, geoJSON, latLng, layerGroup, map, popup, tileLayer } from "leaflet";
+import { GeoJSON, Marker, geoJSON, icon, latLng, layerGroup, map, popup, tileLayer } from "leaflet";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
+import iconMarker from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 
 import { MarkerClusterGroup } from "leaflet.markercluster/src";
@@ -42,6 +44,11 @@ export default {
       tileLayer('https://t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=56b81006f361f6406d0e940d2f89a39c', { subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'] }),
       tileLayer('https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}&tk=56b81006f361f6406d0e940d2f89a39c', { subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'] })
     ]).addTo(mymap);
+    // fix icon issue when production build
+    Marker.prototype.options.icon = icon({
+      iconUrl: iconMarker,
+      shadowUrl: iconShadow,
+    });
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
     this.fullscreenLoading = true;
     axios
