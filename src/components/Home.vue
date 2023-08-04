@@ -1,14 +1,13 @@
 <template>
-  <el-select v-model="value" class="m-2" placeholder="Select" size="large" @change="downloadCar" :loading="loading">
-    <el-option
-      v-for="item in provinces"
-      :key="item"
-      :label="item"
-      :value="item"
-    />
-  </el-select>
+  <div class="fixed top-right">
+    <MyProvence />
+  </div>
   <div id="map" v-loading="fullscreenLoading"></div>
 </template>
+
+<script setup lang="ts">
+import MyProvence from "./MyProvence.vue";
+</script>
 
 <script lang="ts">
 import { geoJSON, latLng, layerGroup, map, popup, tileLayer } from "leaflet";
@@ -96,16 +95,6 @@ export default {
         this.fullscreenLoading = false;
       });
   },
-  methods: {
-    downloadCar() {
-      this.loading = true;
-      if (this.value) {
-        window.open("/api/cars/" + this.value);
-      }
-      this.value = "";
-      this.loading = false;
-    }
-  }
 };
 </script>
 
@@ -116,5 +105,15 @@ export default {
 
 .wrapper {
   min-width: 240px;
+}
+
+.fixed {
+  position: fixed;
+  z-index: 1000;
+}
+
+.top-right {
+  padding: 10px;
+  right: 10px;
 }
 </style>
