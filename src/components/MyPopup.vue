@@ -1,20 +1,27 @@
 <template>
+  <el-dialog v-model="dialogFormVisible" title="更新車" :fullscreen="true">
+    <MyForm 
+      :form-model="copiedCar"
+      :submitFunc="onSubmit"
+    />
+  </el-dialog>
   <el-descriptions
     class="margin-top"
     :title="name"
     :column="1"
-    size="mini"
-    border="true">
+    :border=true>
     <template #extra>
       <el-button
+        @click="dialogFormVisible = true"
+        v-loading="loading"
+        >編輯</el-button>
+      <el-button
         type="danger"
-        size="mini"
         @click="onDelete(name)"
         v-loading="loading"
         >刪除</el-button>
       <el-button
         type="primary"
-        size="mini"
         @click="onCheck(car.url)"
         v-loading="loading"
         >测试</el-button>
@@ -100,11 +107,34 @@
   </el-descriptions>
 </template>
 
+<script lang="ts" setup>
+import { ref } from 'vue';
+import MyForm from './MyForm.vue';
+const dialogFormVisible = ref(false)
+
+</script>
+
 <script lang="ts">
+import { encode } from "@msgpack/msgpack";
 import axios from "axios";
 import Clipboard from "clipboard";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { defineComponent } from "vue";
+
+export interface FormModel {
+  url: string
+  user: string
+  pass: string
+  country: string
+  province: string
+  city: string
+  unit: string
+  vendor: string
+  protocol: string
+  lng: number
+  lat: number
+}
+
 export default defineComponent({
   props: {
     color: {
@@ -123,6 +153,7 @@ export default defineComponent({
   data() {
     return {
       loading: false,
+      copiedCar: this.car,
     };
   },
   methods: {
@@ -181,6 +212,20 @@ export default defineComponent({
           })
         })
     },
+    onSubmit(form: FormModel) {
+      axios
+        .post("/api/update", encode(form))
+        .then((response) => {
+          // handle success
+          console.log(response);
+          ElMessage.success("创建成功！");
+        })
+          .catch((err) => {
+          // handle error
+          console.log(err);
+          ElMessage.error(err?.response?.data.error ?? err.message);
+      })
+    }
   },
   mounted() {
     const clipboard = new Clipboard(".copyBtn");
