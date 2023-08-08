@@ -1,6 +1,13 @@
 <template>
+  <div class="fixed top-right">
+    <MyProvence />
+  </div>
   <div id="map" v-loading="fullscreenLoading"></div>
 </template>
+
+<script setup>
+import MyProvence from "./MyProvence.vue";
+</script>
 
 <script>
 import "leaflet/dist/leaflet.css";
@@ -138,5 +145,15 @@ export default {
 
 .wrapper {
   min-width: 240px;
+}
+
+.fixed {
+  position: fixed;
+  z-index: 1000;
+}
+
+.top-right {
+  padding: 10px;
+  right: 10px;
 }
 </style>
