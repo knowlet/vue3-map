@@ -1,29 +1,28 @@
 <template>
   <div class="fixed top-right">
-    <MyProvence />
+    <MyCities />
   </div>
   <div id="map" v-loading="fullscreenLoading"></div>
 </template>
 
 <script setup>
-import MyProvence from "./MyProvence.vue";
+import MyCities from "./MyCities.vue";
 </script>
 
 <script>
-import "leaflet/dist/leaflet.css";
-import "leaflet.markercluster/dist/MarkerCluster.css";
+import L from "leaflet";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 import { MarkerClusterGroup } from "leaflet.markercluster/src";
 import MyNewPopup from "./MyPopup.vue";
 
-import { createApp, defineComponent, ref, nextTick } from "vue";
 import axios from "axios";
-import ElementPlus from "element-plus";
-import { ElCard, ElMessage } from "element-plus";
+import ElementPlus, { ElMessage } from "element-plus";
+import { createApp } from "vue";
 
 export default {
   data() {

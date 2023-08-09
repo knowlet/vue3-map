@@ -31,7 +31,7 @@ fetch("/api/provinces")
 function downloadCar() {
   loading.value = true;
   if (value.value) {
-    window.open("/api/cars/" + value.value);
+    window.open("/api/cars/province/" + value.value);
   }
   value.value = "";
   loading.value = false;
