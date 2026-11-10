@@ -1,4 +1,5 @@
 import vue from '@vitejs/plugin-vue'
+import { adaptLegacyVuePlugin } from './vite-legacy-vue.mjs'
 import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
@@ -11,5 +12,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue()]
+  plugins: [adaptLegacyVuePlugin(vue())]
 })
