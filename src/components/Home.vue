@@ -36,10 +36,11 @@ export default {
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(this.map);
     const markers = new MarkerClusterGroup({ chunkedLoading: true });
     this.fullscreenLoading = true;
-    this.$loadScript("/js/CanvasFlowmapLayer.js");
-    axios
-      .get("/api/cars")
-      .then((response) => {
+    Promise.all([
+      this.$loadScript("/js/CanvasFlowmapLayer.js"),
+      axios.get("/api/cars"),
+    ])
+      .then(([, response]) => {
         // handle success
         console.log(response);
         ElMessage.success("地图载入成功！");
